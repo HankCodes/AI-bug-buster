@@ -14,5 +14,3 @@ fi
 
 # Clone the repository
 git clone $GIT_REPOSITORY_URL $REPO_DIR
-
-ls
