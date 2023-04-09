@@ -1,1 +1,8 @@
 node_modules
+*.log
+*.gz
+*.zip
+*.tar
+.git
+.env
+Dockerfile

@@ -1,5 +1,18 @@
 #!/bin/sh
 
-echo "this is the git url: ${GIT_REPOSITORY_URL}"
+set -e
 
-# git clone https://${username}:${access_token}@github.com/${username}/${repository}.git
+echo "Cloning repository from ${GIT_REPOSITORY_URL}"
+
+REPO_DIR="my-repo"
+
+# Clean up the repo directory if it already exists
+if [ -d "$REPO_DIR" ]; then
+  echo "Removing existing repo directory"
+  rm -rf "$REPO_DIR"
+fi
+
+# Clone the repository
+git clone $GIT_REPOSITORY_URL $REPO_DIR
+
+ls
