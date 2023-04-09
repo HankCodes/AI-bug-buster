@@ -14,6 +14,10 @@ $ cp .envs.example .envs
 Insiden the created `.envs` file, replace the `GIT_REPOSITORY_URL` environment variable
 with the url to the repository to use.
 
+
+
+
+
 Use the following command to run the application
 ````
 $ docker build -t my-app .
