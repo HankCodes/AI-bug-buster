@@ -4,7 +4,7 @@ set -e
 
 echo "Cloning repository from ${GIT_REPOSITORY_URL}"
 
-REPO_DIR="my-repo"
+REPO_DIR="../my-repo"
 
 # Clean up the repo directory if it already exists
 if [ -d "$REPO_DIR" ]; then

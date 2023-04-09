@@ -8,6 +8,8 @@ COPY . .
 RUN npm run build
 
 RUN apk update && apk add --no-cache git
+RUN git config --global user.email "bot@.com"
+RUN git config --global user.name "Bot"
 
 COPY pull-repository.sh ./
 RUN chmod +x pull-repository.sh
