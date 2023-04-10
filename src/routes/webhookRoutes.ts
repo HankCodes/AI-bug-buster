@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { baseController } from '../controllers/baseController';
+import webhookController from '../controllers/webhookController';
 
-const router = Router();
+const webhookRouter = Router();
 
-router.post('/webhook', baseController);
+webhookRouter.post('/webhook', webhookController.receiveWebhook);
 
-export default router;
+export default webhookRouter;
