@@ -1,9 +1,10 @@
+
 import { Request, Response } from 'express';
+import { IWebhookController } from './contracts/IWebhookController';
 
-const webhookController = {
-  receiveWebhook: (_req: Request, res: Response) => {
-    res.send('Hello, world!')
-  }
+export default class WebhookController implements IWebhookController {
+
+    receiveWebhook(req: Request, res: Response): void {
+      res.json({ message: "Hi" })
+    }
 }
-
-export default webhookController
