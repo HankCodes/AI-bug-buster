@@ -5,8 +5,9 @@ import { WebhookRouter } from './routes/webhookRoutes';
 const app = express();
 const port = 3000;
 
-const webhookRouter = new WebhookRouter(new WebhookController())
+app.use(express.json())
 
+const webhookRouter = new WebhookRouter(new WebhookController())
 webhookRouter.installRoutes(app)
 
 app.listen(port, () => {
