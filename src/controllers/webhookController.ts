@@ -8,11 +8,14 @@ export default class WebhookController implements IWebhookController {
     receiveWebhook(req: Request, res: Response): void {
       try {
         const body: WebhookRequest = req.body
-        console.log('the body:', body);
+        console.log('the body:', body.payload.charAt(4));
 
-        res.sendStatus(200)
+
+        res.json({ status: 'ok' })
       } catch (error) {
-        res.sendStatus(500)
+        console.log("here I am");
+
+        res.status(500).json({ status: 'error', error: "bo" })
       }
     }
 }
