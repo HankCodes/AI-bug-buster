@@ -14,7 +14,7 @@ export default class WebhookController implements IWebhookController {
       const file = await fileService.search("src", "testFile.js")
       if (file) {
         const fileContent = await fileService.getContent(file)
-        const chatGPTChanges = fileContent + `"Changes from chatGPT with random number: "` + Math.random()
+        const chatGPTChanges = `const h = [${Math.random()}]`
         fileService.replaceFileContent(file, chatGPTChanges)
       }
 
