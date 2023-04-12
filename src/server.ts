@@ -1,6 +1,5 @@
 import express, { ErrorRequestHandler, json, Request, Response } from 'express';
 import WebhookController from './controllers/webhookController';
-import { main } from './fileSearch';
 import { WebhookRouter } from './routes/webhookRoutes';
 
 const app = express();
@@ -24,5 +23,3 @@ webhookRouter.installRoutes(app)
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-
-main();
