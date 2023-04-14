@@ -16,27 +16,29 @@ export default class WebhookController implements IWebhookController {
       const answer = [
         {
           filenName: "testFile.js",
-          prompt: "can you find the error in this file and update the content accordin to you suggestions. It is important that you return only the content of the file and NOTHING else",
+          prompt: "can you find the error in this file and update the content accordin to you suggestions.",
         },
-        {
-          filenName: "testFile2.js",
-          prompt: "Error description from chatGPT with potential changes",
-        }
+        // {
+        //   filenName: "testFile2.js",
+        //   prompt: "Error description from chatGPT with potential changes",
+        // }
       ]
-      const updatedAnswer = answer.map(async (item) => {
+      answer.forEach(async (item) => {
         const file = await fileService.search("src", item.filenName)
+
         if (file) {
           const fileContent = await fileService.getContent(file)
-          console.log("api key: ", process.env.OPENAI_API_KEY);
 
-          const ai = new AiService({ apiKey: process.env.OPENAI_API_KEY || "key", model: "gpt-3.5-turbo" })
+          const ai = new AiService({ apiKey: process.env.OPENAI_API_KEY || "key", model: "text-davinci-003" })
+
           const prompt = ai.generatePrompt(item.prompt, fileContent)
-
+          console.log("prompt", prompt);
 
           const chatGPTChanges = await ai.getAnswer(prompt)
+
           console.log("chatGPTChanges", chatGPTChanges);
 
-          // fileService.replaceFileContent(file, chatGPTChanges)
+          fileService.replaceFileContent(file, chatGPTChanges)
         }
       })
 
