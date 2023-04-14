@@ -1,7 +1,9 @@
 import express, { ErrorRequestHandler, json, Request, Response } from 'express';
 import WebhookController from './controllers/webhookController';
 import { WebhookRouter } from './routes/webhookRoutes';
+import dotenv from 'dotenv';
 
+dotenv.config()
 const app = express();
 const port = 3000;
 
