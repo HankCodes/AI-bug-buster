@@ -20,7 +20,11 @@ export class AiService {
         this.openai = new OpenAIApi(configuration);
     }
 
-    generatePrompt = (prompt: string, fileContent: string) => {
+    generatePromptForErrorMessageAnalysis = (errorMessage: string) => {
+        return `Given this error message: ${errorMessage}, can you locate the files that are causing this error and give a prompt to yourself that can be used to instruct you to update the file content, the instruction on what to change needs to be crystal clear. respond in the following format: [{"fileName": "nameOfFile.js", "prompt": "can you find the error in this file and update the content accordin to you suggestions."}]`
+    }
+
+    generatePromptForFileUpdates = (prompt: string, fileContent: string) => {
         return `Given this file content: ${fileContent}, ${prompt}`
     }
 

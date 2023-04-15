@@ -12,42 +12,46 @@ export default class WebhookController implements IWebhookController {
       const body: WebhookRequest = req.body
       console.log('the body:', body.payload);
 
-      // Ask chatGPT about error message
-      const answer = [
-        {
-          filenName: "testFile.js",
-          prompt: "can you find the error in this file and update the content accordin to you suggestions.",
-        },
-        // {
-        //   filenName: "testFile2.js",
-        //   prompt: "Error description from chatGPT with potential changes",
-        // }
-      ]
-      answer.forEach(async (item) => {
-        const file = await fileService.search("src", item.filenName)
+      const ai = new AiService({ apiKey: process.env.OPENAI_API_KEY || "key", model: "text-davinci-003" })
 
-        if (file) {
-          const fileContent = await fileService.getContent(file)
+      const filesToUpdate = await getFilesToUpdate(ai, body.payload)
 
-          const ai = new AiService({ apiKey: process.env.OPENAI_API_KEY || "key", model: "text-davinci-003" })
-
-          const prompt = ai.generatePrompt(item.prompt, fileContent)
-          console.log("prompt", prompt);
-
-          const chatGPTChanges = await ai.getAnswer(prompt)
-
-          console.log("chatGPTChanges", chatGPTChanges);
-
-          fileService.replaceFileContent(file, chatGPTChanges)
-        }
-      })
-
+      await updateFiles(ai, filesToUpdate)
 
       res.json({ status: 'ok' })
-    } catch (error) {
+    } catch (error: any) {
       console.log("here I am");
 
-      res.status(500).json({ status: 'error', error: "bo" })
+      res.status(500).json({ status: 'error', error: error.message || "boo" })
     }
   }
+}
+
+const getFilesToUpdate = async (ai: AiService, errorMessage: string): Promise<[{ fileName: string, prompt: string }]> => {
+  const prompt = ai.generatePromptForErrorMessageAnalysis(errorMessage)
+  const filesAndPrompts = (await ai.getAnswer(prompt)).trim().replace("\n", "")
+  console.log("getFilesToUpdate filesAndPrompts", filesAndPrompts);
+
+  return JSON.parse(filesAndPrompts.trim().replace("\n", ""))
+}
+
+const updateFiles = async (ai: AiService, prompts: [{ fileName: string, prompt: string }]) => {
+  prompts.forEach(async (item) => {
+    const file = await fileService.search("src", item.fileName)
+
+    if (file) {
+      const fileContent = await fileService.getContent(file)
+
+
+      const prompt = ai.generatePromptForFileUpdates(item.prompt, fileContent)
+      console.log("updateFiles prompt", prompt);
+
+      const chatGPTChanges = await ai.getAnswer(prompt)
+
+      console.log("updateFiles  chatGPTChanges", chatGPTChanges);
+
+      // fileService.replaceFileContent(file, chatGPTChanges)
+    }
+  })
+
 }
