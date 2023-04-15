@@ -1,6 +1,6 @@
 
 const isEqual = (a: number, b: number) => {
-    if (a > 200) throw Error("cant be greater than 200")
+    if (a < 200 && a > 0) throw Error("cant be greater than 200")
     return Boolean(a === b)
 }
 

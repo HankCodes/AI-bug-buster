@@ -1,26 +1,34 @@
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 
+const isPathToFile = (path: string): boolean => {
+    return path.split('/').length > 1;
+};
+
 const search = async (directory: string, fileName: string): Promise<string | null> => {
     try {
 
         const dir = await fsPromises.opendir(directory);
 
-        for await (const dirent of dir) {
-            const entryPath = path.resolve(directory, dirent.name);
-            console.log(`Searching in ${entryPath} for file ${fileName}...`);
+        if (!isPathToFile(fileName)) {
+            for await (const dirent of dir) {
+                const entryPath = path.resolve(directory, dirent.name);
+                console.log(`Searching in ${entryPath} for file ${fileName}...`);
 
-            if (dirent.name.endsWith(fileName)) {
-                return entryPath;
-            }
+                if (dirent.name.endsWith(fileName)) {
+                    return entryPath;
+                }
 
-            const stats = await fsPromises.stat(entryPath);
-            if (stats.isDirectory()) {
-                const result = await search(entryPath, fileName);
-                if (result) {
-                    return result;
+                const stats = await fsPromises.stat(entryPath);
+                if (stats.isDirectory()) {
+                    const result = await search(entryPath, fileName);
+                    if (result) {
+                        return result;
+                    }
                 }
             }
+        } else {
+            return fileName
         }
 
         return null;
@@ -65,6 +73,8 @@ export const searchAndReplaceFileContent = async (fileToFind: string) => {
         await replaceFileContent(filePath, newContent);
     }
 }
+
+
 
 export const fileService = {
     search,

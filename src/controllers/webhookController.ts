@@ -50,7 +50,10 @@ const updateFiles = async (ai: AiService, prompts: [{ fileName: string, prompt: 
 
       console.log("updateFiles  chatGPTChanges", chatGPTChanges);
 
-      // fileService.replaceFileContent(file, chatGPTChanges)
+      fileService.replaceFileContent(file, chatGPTChanges)
+    } else {
+      console.log("file not found: ", item.fileName);
+
     }
   })
 

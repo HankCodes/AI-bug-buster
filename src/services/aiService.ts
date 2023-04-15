@@ -21,11 +21,17 @@ export class AiService {
     }
 
     generatePromptForErrorMessageAnalysis = (errorMessage: string) => {
-        return `Given this error message: ${errorMessage}, can you locate the files that are causing this error and give a prompt to yourself that can be used to instruct you to update the file content, the instruction on what to change needs to be crystal clear. respond in the following format: [{"fileName": "nameOfFile.js", "prompt": "can you find the error in this file and update the content accordin to you suggestions."}]`
+        return `
+        Given this error message: ${errorMessage},
+        can you locate the files that are causing this error and give a
+        prompt to yourself that can be used to instruct you to update the file content,
+        the instruction on what to change needs to be crystal clear.
+        respond in the following format:
+        [{"fileName": "nameOfFile.js", "prompt": "can you find the error in this file and update the content accordin to you suggestions."}]`.trim().replace("\n", " ")
     }
 
     generatePromptForFileUpdates = (prompt: string, fileContent: string) => {
-        return `Given this file content: ${fileContent}, ${prompt}`
+        return `Given this file content: ${fileContent}, ${prompt}, The resonse you give must be the whole file content with the changes you want to make and nothing else.`
     }
 
     async getAnswer(prompt: string): Promise<string> {
@@ -34,7 +40,7 @@ export class AiService {
             model: this.config.model,
             prompt: prompt,
             temperature: 0.6,
-            max_tokens: 100,
+            max_tokens: 200,
         });
 
         console.log("\n\ncompletion", completion.data, "\n\n");
