@@ -1,5 +1,5 @@
-import {  Express } from 'express';
+import { Express } from 'express';
 
 export interface IRouteHandler {
-    installRoutes(app: Express): void
+    installRoutes(app: Express): Express
 }

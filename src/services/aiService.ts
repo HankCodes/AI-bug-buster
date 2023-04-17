@@ -1,47 +1,35 @@
-import { Configuration, OpenAIApi } from "openai"
+import { IAiClient } from "../clients/contracts/IAiClient";
+import { IAiService } from "./contracts/IAiService";
 
-export type AiServiceConfig = {
-    apiKey: string;
-    model: string | "text-davinci-003";
-}
+export class AiService implements IAiService {
+    private aiClient: IAiClient;
 
-export class AiService {
-    private config: AiServiceConfig;
-    private openai: OpenAIApi;
-
-    constructor(config: AiServiceConfig) {
-        this.config = config;
-
-        const configuration = new Configuration({
-            apiKey: this.config.apiKey,
-
-        });
-
-        this.openai = new OpenAIApi(configuration);
+    constructor(aiClient: IAiClient) {
+        this.aiClient = aiClient;
     }
 
-    generatePromptForErrorMessageAnalysis = (errorMessage: string) => {
+    generatePromptForErrorMessageAnalysis(errorMessage: string): string {
         return `
-        Given this error message: ${errorMessage},
-        can you locate the files that are causing this error and give a
-        prompt to yourself that can be used to instruct you to update the file content,
-        the instruction on what to change needs to be crystal clear.
-        respond in the following format:
-        [{"fileName": "nameOfFile.js", "prompt": "can you find the error in this file and update the content accordin to you suggestions."}]`.trim().replace("\n", " ")
+        As a senior developer with great expertise in finding bugs from stacktaces you get the following stacktace:
+
+        ${errorMessage}
+
+        Analyze the stack trace and find in what files the potential bugs may lie. You understand that the response you give will
+        be read by a computer so you will respond in the following JSON format:
+        [{"fileName": "<name of the file>", "prompt": "<chatGPT prompt>"}]
+        If you think that there may be a bug in more than one file, you can add more than one object to the array.
+
+        In the "prompt" property of the object, you will give a prompt to yourself that can be used to instruct you to update the file content.
+        `.trim().replace("\n", " ");
     }
 
-    generatePromptForFileUpdates = (prompt: string, fileContent: string) => {
-        return `Given this file content: ${fileContent}, ${prompt}, The resonse you give must be the whole file content with the changes you want to make and nothing else.`
+    generatePromptForFileUpdates(prompt: string, fileContent: string): string {
+        return `Given this file content: ${fileContent}, ${prompt}, The response you give must be the whole file content with the changes you want to make and nothing else.`
     }
 
     async getAnswer(prompt: string): Promise<string> {
 
-        const completion = await this.openai.createCompletion({
-            model: this.config.model,
-            prompt: prompt,
-            temperature: 0.6,
-            max_tokens: 200,
-        });
+        const completion = await this.aiClient.createCompletion(prompt);
 
         console.log("\n\ncompletion", completion.data, "\n\n");
         console.log("\n\nfinish_reason: ", completion.data.choices[0].finish_reason, "\n\n");
