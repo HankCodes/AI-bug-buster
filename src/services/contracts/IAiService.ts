@@ -2,7 +2,6 @@
 
 export interface IAiService {
 
-    generatePromptForFileUpdates(prompt: string, fileContent: string): string
-    generatePromptForErrorMessageAnalysis(errorMessage: string): string
-    getAnswer(prompt: string): Promise<string>
+    getFilesAndPrompts(errorMessage: string): Promise<string>
+    getUpdatedFileContent(prompt: string, fileContent: string): Promise<string>
 }

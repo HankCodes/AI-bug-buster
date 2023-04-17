@@ -8,7 +8,17 @@ export class AiService implements IAiService {
         this.aiClient = aiClient;
     }
 
-    generatePromptForErrorMessageAnalysis(errorMessage: string): string {
+    async getFilesAndPrompts(errorMessage: string): Promise<string> {
+        const prompt = this.generatePromptForErrorMessageAnalysis(errorMessage);
+        return await this.getAnswer(prompt);
+    }
+
+    async getUpdatedFileContent(prompt: string, fileContent: string): Promise<string> {
+        const fileUpdatesPrompt = this.generatePromptForFileUpdates(prompt, fileContent);
+        return await this.getAnswer(fileUpdatesPrompt);
+    }
+
+    private generatePromptForErrorMessageAnalysis(errorMessage: string): string {
         return `
         As a senior developer with great expertise in finding bugs from stacktaces you get the following stacktace:
 
@@ -23,11 +33,11 @@ export class AiService implements IAiService {
         `.trim().replace("\n", " ");
     }
 
-    generatePromptForFileUpdates(prompt: string, fileContent: string): string {
+    private generatePromptForFileUpdates(prompt: string, fileContent: string): string {
         return `Given this file content: ${fileContent}, ${prompt}, The response you give must be the whole file content with the changes you want to make and nothing else.`
     }
 
-    async getAnswer(prompt: string): Promise<string> {
+    private async getAnswer(prompt: string): Promise<string> {
 
         const completion = await this.aiClient.createCompletion(prompt);
 
