@@ -3,7 +3,8 @@ import express, { Express, ErrorRequestHandler, json, Request, Response } from '
 import ChatGptClient from './clients/ChatGptClient';
 import WebhookController from './controllers/webhookController';
 import { WebhookRouter } from './routes/webhookRoutes';
-import { AiService } from './services/aiService';
+import { AiService } from './services/AiService';
+import { FileService } from './services/FileService';
 
 export class Setup {
     private port: number;
@@ -15,8 +16,6 @@ export class Setup {
     }
 
     public addMiddlewares(): Setup {
-
-
         this.app.use(express.json())
         this.app.use(express.urlencoded({ extended: true }))
 
@@ -39,7 +38,8 @@ export class Setup {
         // TODO: Decide on dependency injection framework?
         const aiclient = new ChatGptClient(process.env.OPENAI_API_KEY || "key", "text-davinci-003")
         const ai = new AiService(aiclient)
-        const controller = new WebhookController(ai)
+        const fileService = new FileService()
+        const controller = new WebhookController(ai, fileService)
 
         const webhookRouter = new WebhookRouter(controller)
         this.app = webhookRouter.installRoutes(this.app)
@@ -48,7 +48,6 @@ export class Setup {
     }
 
     public start(): void {
-
         this.app.listen(this.port, () => {
             console.log(`Server started on port ${this.port}`);
         })
