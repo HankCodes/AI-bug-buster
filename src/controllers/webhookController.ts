@@ -2,7 +2,7 @@
 import { Request, Response } from 'express';
 import { WebhookRequest } from '../data/request/WebhookRequest';
 import { IAiService } from '../services/contracts/IAiService';
-import { FileService } from "../services/FileService";
+import { FileService } from '../services/FileService';
 import { IWebhookController } from './contracts/IWebhookController';
 
 export default class WebhookController implements IWebhookController {
