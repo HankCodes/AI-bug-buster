@@ -1,2 +1,4 @@
 
-GIT_REPOSITORY_URL="the_url_with_creds"
+GIT_REPOSITORY_URL=the_url_with_creds
+OPENAI_API_KEY=api-key
+REPOSITORY_LOCAL_LOCATION=path/to/file

@@ -11,7 +11,7 @@ RUN apk update && apk add --no-cache git
 RUN git config --global user.email "bot@.com"
 RUN git config --global user.name "Bot"
 
-COPY pull-repository.sh ./
-RUN chmod +x pull-repository.sh
+COPY clone-repository.sh ./
+RUN chmod +x clone-repository.sh
 
-ENTRYPOINT ["sh", "-c", "./pull-repository.sh && npm start"]
+ENTRYPOINT ["sh", "-c", "./clone-repository.sh && npm start"]
