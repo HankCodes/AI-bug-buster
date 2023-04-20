@@ -2,19 +2,27 @@
 import { Configuration, CreateCompletionResponse, OpenAIApi } from "openai"
 import { IAiClient } from "./contracts/IAiClient";
 
+export type ChatGptClientConfig = {
+    apiKey: string;
+    model?: string;
+    temperature?: number;
+    maxTokens?: number;
+}
+
 export default class ChatGptClient implements IAiClient {
     private aiClient: OpenAIApi;
 
-    // TODO: make this configurable through envs and pass to constructor or function calls?
     private model: string;
-    private temperature: number = 0.6;
-    private maxTokens: number = 200;
+    private temperature: number;
+    private maxTokens: number;
 
-    constructor(apiKey: string, model: string = "text-davinci-003") {
-        this.model = model;
+    constructor(config: ChatGptClientConfig) {
+        this.model = config.model || "text-davinci-003";
+        this.maxTokens = config.maxTokens || 200;
+        this.temperature = config.temperature || 0.6;
 
         this.aiClient = new OpenAIApi(new Configuration({
-            apiKey: apiKey,
+            apiKey: config.apiKey,
         }));
     }
 
@@ -26,5 +34,4 @@ export default class ChatGptClient implements IAiClient {
             max_tokens: this.maxTokens,
         }));
     }
-
 }

@@ -8,14 +8,19 @@ export class AiService implements IAiService {
         this.aiClient = aiClient;
     }
 
-    async getFilesAndPrompts(errorMessage: string): Promise<string> {
+    async getFilesAndPrompts(errorMessage: string): Promise<[{ fileName: string, prompt: string }]> {
         const prompt = this.generatePromptForErrorMessageAnalysis(errorMessage);
-        return await this.getAnswer(prompt);
+        console.log("[AiService]: Analyze error prompt:\n", prompt);
+
+        const answer = await this.askAi(prompt);
+        return JSON.parse(answer)
     }
 
     async getUpdatedFileContent(prompt: string, fileContent: string): Promise<string> {
         const fileUpdatesPrompt = this.generatePromptForFileUpdates(prompt, fileContent);
-        return await this.getAnswer(fileUpdatesPrompt);
+        console.log("[AiService]: File updates prompt:\n", fileUpdatesPrompt);
+
+        return await this.askAi(fileUpdatesPrompt);
     }
 
     private generatePromptForErrorMessageAnalysis(errorMessage: string): string {
@@ -37,7 +42,7 @@ export class AiService implements IAiService {
         return `Given this file content: ${fileContent}, ${prompt}, The response you give must be the whole file content with the changes you want to make and nothing else.`
     }
 
-    private async getAnswer(prompt: string): Promise<string> {
+    private async askAi(prompt: string): Promise<string> {
 
         const completion = await this.aiClient.createCompletion(prompt);
 

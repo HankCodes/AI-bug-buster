@@ -1,18 +1,22 @@
 
 import express, { Express, ErrorRequestHandler, json, Request, Response } from 'express';
-import ChatGptClient from './clients/ChatGptClient';
+import ChatGptClient, { ChatGptClientConfig } from './clients/ChatGptClient';
 import WebhookController from './controllers/webhookController';
 import { WebhookRouter } from './routes/webhookRoutes';
 import { AiService } from './services/AiService';
-import { FileService } from './services/FileService';
+import { FileService } from "./services/FileService";
 
 export class Setup {
     private port: number;
     private app: Express;
+    private openApiKey: string;
 
     constructor(port: number) {
+        if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not set");
+
+        this.openApiKey = process.env.OPENAI_API_KEY
         this.port = port;
-        this.app = express()
+        this.app = express();
     }
 
     public addMiddlewares(): Setup {
@@ -36,7 +40,8 @@ export class Setup {
     public addRoutes(): Setup {
 
         // TODO: Decide on dependency injection framework?
-        const aiclient = new ChatGptClient(process.env.OPENAI_API_KEY || "key", "text-davinci-003")
+
+        const aiclient = new ChatGptClient({ apiKey: this.openApiKey })
         const ai = new AiService(aiclient)
         const fileService = new FileService()
         const controller = new WebhookController(ai, fileService)
