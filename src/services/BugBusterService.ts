@@ -15,22 +15,23 @@ export class BugBusterService {
     public async bustTheBugs(errorMessage: string) {
 
         const filesAndPrompts = await this.ai.getFilesAndPrompts(errorMessage)
-        console.log("The files to update and the corresponding prompts", filesAndPrompts);
+        console.log("[BugBusterService]: The files to update and the corresponding prompts", filesAndPrompts);
 
         await this.updateFiles(filesAndPrompts)
     }
 
     private updateFiles = async (prompts: [{ fileName: string, prompt: string }]) => {
         prompts.forEach(async (item) => {
-            const file = await this.fileService.search(this.repositoryLocation, item.fileName)
-            if (!file) {
-                return console.log("file not found: ", item.fileName);
-            }
+            const fileName = this.fileService.getFileNameFomPath(item.fileName);
+            if (!fileName) return console.log("[BugBusterService]: Filename not resolved: ", item.fileName)
+
+            const file = await this.fileService.search(this.repositoryLocation, fileName)
+            if (!file) return console.log("[BugBusterService]: File not found: ", fileName);
 
             const fileContent = await this.fileService.getContent(file)
             const chatGPTChanges = await this.ai.getUpdatedFileContent(item.prompt, fileContent)
 
-            console.log(`Changes to be applied to the file ${file}: \n\n`, chatGPTChanges);
+            console.log(`[BugBusterService]: Changes to be applied to the file ${file}: \n\n`, chatGPTChanges);
             this.fileService.replaceContent(file, chatGPTChanges.trim())
         })
     }

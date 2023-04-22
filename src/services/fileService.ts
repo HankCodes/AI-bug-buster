@@ -2,35 +2,30 @@ import path from 'path';
 import { promises as fsPromises } from 'fs';
 
 export class FileService {
-    isPathToFile(path: string): boolean {
-        return path.split('/').length > 1;
-    };
 
     async search(directory: string, fileName: string): Promise<string | null> {
         try {
             console.log("[FileService]: Opening directory", directory);
-
             const dir = await fsPromises.opendir(directory);
 
-            if (!this.isPathToFile(fileName)) {
-                for await (const dirent of dir) {
-                    const entryPath = path.resolve(directory, dirent.name);
-                    console.log(`Searching in ${entryPath} for file ${fileName}...`);
+            console.log(`[FileService]: File to search for: ${fileName}`);
 
-                    if (dirent.name.endsWith(fileName)) {
-                        return entryPath;
-                    }
+            for await (const dirent of dir) {
+                const entryPath = path.resolve(directory, dirent.name);
+                console.log(`[FileService]: Searching in ${entryPath} for file ${fileName}...`);
 
-                    const stats = await fsPromises.stat(entryPath);
-                    if (stats.isDirectory()) {
-                        const result = await this.search(entryPath, fileName);
-                        if (result) {
-                            return result;
-                        }
+                const stats = await fsPromises.stat(entryPath);
+                if (stats.isDirectory()) {
+                    const result = await this.search(entryPath, fileName);
+                    if (result) {
+                        return result;
                     }
                 }
-            } else {
-                return fileName
+
+                if (dirent.name.endsWith(fileName)) {
+                    console.log(`[FileService]: file "${fileName}" found in ${entryPath}!`);
+                    return entryPath;
+                }
             }
 
             return null;
@@ -58,4 +53,26 @@ export class FileService {
             throw err;
         }
     };
+
+    public getFileNameFomPath(path: string): string | null {
+        if (!this.isFilePath(path)) {
+            return path
+        }
+
+        console.log(`[FileService]: Extracing filename from path ${path}`);
+        const extractedFileNme = path.split('/').pop() || null;
+
+        if (!extractedFileNme) {
+            console.log("[FileService]: Could not extract a file name from the following path: ", path);
+            return null;
+        }
+
+        console.log(`[FileService]: File name extracted: ${extractedFileNme}`);
+        return extractedFileNme;
+    }
+
+    private isFilePath(path: string): boolean {
+        return path.split('/').length > 1;
+    };
+
 }
