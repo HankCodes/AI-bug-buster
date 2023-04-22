@@ -1,19 +1,23 @@
 
-import express, { Express, ErrorRequestHandler, json, Request, Response } from 'express';
-import ChatGptClient, { ChatGptClientConfig } from './clients/ChatGptClient';
+import express, { Express, ErrorRequestHandler } from 'express';
+import ChatGptClient from './clients/ChatGptClient';
 import WebhookController from './controllers/webhookController';
 import { WebhookRouter } from './routes/webhookRoutes';
 import { AiService } from './services/AiService';
+import { BugBusterService } from './services/BugBusterService';
 import { FileService } from "./services/FileService";
 
 export class Setup {
     private port: number;
     private app: Express;
     private openApiKey: string;
+    private repositoryLocation: string;
 
     constructor(port: number) {
         if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not set");
+        if (!process.env.REPOSITORY_LOCAL_LOCATION) throw new Error("REPOSITORY_LOCAL_LOCATION not set");
 
+        this.repositoryLocation = process.env.REPOSITORY_LOCAL_LOCATION
         this.openApiKey = process.env.OPENAI_API_KEY
         this.port = port;
         this.app = express();
@@ -24,6 +28,7 @@ export class Setup {
         this.app.use(express.urlencoded({ extended: true }))
 
         this.app.use((err: ErrorRequestHandler, req: any, res: any, next: any) => {
+            // TODO: Improvable error handling
             if (err instanceof SyntaxError && 'body' in err) {
                 // JSON parse error
                 console.log(err);
@@ -44,9 +49,10 @@ export class Setup {
         const aiclient = new ChatGptClient({ apiKey: this.openApiKey })
         const ai = new AiService(aiclient)
         const fileService = new FileService()
-        const controller = new WebhookController(ai, fileService)
-
+        const bugBusterService = new BugBusterService(ai, fileService, this.repositoryLocation)
+        const controller = new WebhookController(bugBusterService)
         const webhookRouter = new WebhookRouter(controller)
+
         this.app = webhookRouter.installRoutes(this.app)
 
         return this

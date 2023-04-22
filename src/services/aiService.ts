@@ -46,8 +46,8 @@ export class AiService implements IAiService {
 
         const completion = await this.aiClient.createCompletion(prompt);
 
-        console.log("\n\ncompletion", completion.data, "\n\n");
-        console.log("\n\nfinish_reason: ", completion.data.choices[0].finish_reason, "\n\n");
+        // console.log("\n\ncompletion", completion.data, "\n\n");
+        console.log("\nfinish_reason: ", completion.data.choices[0].finish_reason, "\n\n");
 
         return completion.data.choices[0].text || "";
     }
