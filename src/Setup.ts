@@ -1,6 +1,7 @@
 
 import express, { Express, ErrorRequestHandler } from 'express';
 import ChatGptClient from './clients/ChatGptClient';
+import { DummyAiClient } from './clients/DummyAiClient';
 import WebhookController from './controllers/webhookController';
 import { WebhookRouter } from './routes/webhookRoutes';
 import { AiService } from './services/AiService';
@@ -46,7 +47,8 @@ export class Setup {
 
         // TODO: Decide on dependency injection framework?
 
-        const aiclient = new ChatGptClient({ apiKey: this.openApiKey })
+        // const aiclient = new ChatGptClient({ apiKey: this.openApiKey })
+        const aiclient = new DummyAiClient()
         const ai = new AiService(aiclient)
         const fileService = new FileService()
         const bugBusterService = new BugBusterService(ai, fileService, this.repositoryLocation)
