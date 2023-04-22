@@ -2,14 +2,19 @@ import path from 'path';
 import { promises as fsPromises } from 'fs';
 
 export class FileService {
+    private directoriesToIgnore = ['node_modules', '.git'];
 
     async search(directory: string, fileName: string): Promise<string | null> {
         try {
+            if (this.shouldIgnoreDirectory(directory)) {
+                console.log(`[FileService]: Ignoring directory ${directory}`);
+                return null;
+            }
+
             console.log("[FileService]: Opening directory", directory);
             const dir = await fsPromises.opendir(directory);
 
             console.log(`[FileService]: File to search for: ${fileName}`);
-
             for await (const dirent of dir) {
                 const entryPath = path.resolve(directory, dirent.name);
                 console.log(`[FileService]: Searching in ${entryPath} for file ${fileName}...`);
@@ -54,21 +59,26 @@ export class FileService {
         }
     };
 
-    public getFileNameFomPath(path: string): string | null {
-        if (!this.isFilePath(path)) {
-            return path
+    // This method might not be this complicated. path.basename(pathToCheck) might be all we need.
+    public getFileNameFomPath(pathToCheck: string): string | null {
+        if (!this.isFilePath(pathToCheck)) {
+            return pathToCheck
         }
 
-        console.log(`[FileService]: Extracing filename from path ${path}`);
-        const extractedFileNme = path.split('/').pop() || null;
+        console.log(`[FileService]: Extracing filename from path ${pathToCheck}`);
+        const extractedFileNme = path.basename(pathToCheck) || null;
 
         if (!extractedFileNme) {
-            console.log("[FileService]: Could not extract a file name from the following path: ", path);
+            console.log("[FileService]: Could not extract a file name from the following path: ", pathToCheck);
             return null;
         }
 
         console.log(`[FileService]: File name extracted: ${extractedFileNme}`);
         return extractedFileNme;
+    }
+
+    private shouldIgnoreDirectory(directory: string): boolean {
+        return this.directoriesToIgnore.includes(path.basename(directory))
     }
 
     private isFilePath(path: string): boolean {
