@@ -8,6 +8,8 @@ export class FileService {
 
     async search(directory: string, fileName: string): Promise<string | null> {
         try {
+            console.log("[FileService]: Opening directory", directory);
+
             const dir = await fsPromises.opendir(directory);
 
             if (!this.isPathToFile(fileName)) {
