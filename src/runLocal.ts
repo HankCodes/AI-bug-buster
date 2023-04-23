@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import ChatGptClient from './clients/ChatGptClient'
 
 dotenv.config()
-const errorTextFilePath = "../localErrorMessage.txt"
+const errorTextFilePath = "../local.txt"
 
 const getErrorMessageFromLocalFile = (location: string) => {
     try {
