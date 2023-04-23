@@ -7,13 +7,14 @@ import { FileService } from "./services/FileService"
 import dotenv from 'dotenv';
 
 dotenv.config()
+const errorTextFilePath = "../localErrorMessage.txt"
 
-const getErrorMessageFromLocalFile = () => {
+const getErrorMessageFromLocalFile = (location: string) => {
     try {
-        return fs.readFileSync(path.join(__dirname, 'localErrorMessage.txt'), 'utf8');
+        return fs.readFileSync(path.join(__dirname, location), 'utf8');
     } catch (error: any) {
         if (error?.code === 'ENOENT') {
-            console.log('"localErrorMessage.txt" not found in the root of the project. Please create it and add the error message you want to fix.')
+            console.log(`Could not find file: "${location}"`)
             process.exit(1)
         }
         throw new Error('Unexpected error reading localErrorMessage.txt')
@@ -21,6 +22,13 @@ const getErrorMessageFromLocalFile = () => {
 }
 
 const checkFileExists = (location: string, errorMessage: string) => {
+    if (!fs.existsSync(path.join(__dirname, location))) {
+        console.log(errorMessage);
+        process.exit(1)
+    }
+}
+
+const checkFileExistsAbsolutePath = (location: string, errorMessage: string) => {
     if (!fs.existsSync(location)) {
         console.log(errorMessage);
         process.exit(1)
@@ -28,20 +36,21 @@ const checkFileExists = (location: string, errorMessage: string) => {
 }
 
 
-
 if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not set");
 if (!process.env.REPOSITORY_LOCAL_LOCATION) throw new Error("REPOSITORY_LOCAL_LOCATION not set");
-checkFileExists(
-    process.env.REPOSITORY_LOCAL_LOCATION,
-    "REPOSITORY_LOCAL_LOCATION is not a valid directory, did you clone the repository in the right place?"
+
+const repositoryLocation = `${process.env.REPOSITORY_LOCAL_LOCATION}`
+
+checkFileExistsAbsolutePath(
+    repositoryLocation,
+    `REPOSITORY_LOCAL_LOCATION: ${repositoryLocation}, is not a valid directory, did you clone the repository in the right place?`
 )
 checkFileExists(
-    "localErrorMessage.txt",
-    '"localErrorMessage.txt" not found in the root of the project. Please create it and add the error message you want to fix.'
+    errorTextFilePath,
+    `"${errorTextFilePath.replace("../", "")}" not found in the root of the project. Please create it and add the error message you want to fix.`
 )
 
-const errorMessage = getErrorMessageFromLocalFile()
-const repositoryLocation = process.env.REPOSITORY_LOCAL_LOCATION
+const errorMessage = getErrorMessageFromLocalFile(errorTextFilePath)
 
 // const aiclient = new ChatGptClient({ apiKey: this.openApiKey })
 const aiclient = new DummyAiClient()

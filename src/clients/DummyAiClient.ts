@@ -9,7 +9,7 @@ export class DummyAiClient implements IAiClient {
         if (prompt.includes("As a senior developer with")) {
             response = JSON.stringify([
                 { fileName: "src/dummyFiles/file1.ts", prompt: "Fix the bug" },
-                { fileName: "src/dummyFiles/file2.ts", prompt: "Fix the bug" }
+                // { fileName: "src/dummyFiles/file2.ts", prompt: "Fix the bug" }
             ])
         } else {
             response = `const a = ${Math.random()};`
