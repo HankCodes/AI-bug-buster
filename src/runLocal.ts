@@ -5,6 +5,7 @@ import { AiService } from "./services/AiService"
 import { BugBusterService } from "./services/BugBusterService"
 import { FileService } from "./services/FileService"
 import dotenv from 'dotenv';
+import ChatGptClient from './clients/ChatGptClient'
 
 dotenv.config()
 const errorTextFilePath = "../localErrorMessage.txt"
@@ -52,8 +53,8 @@ checkFileExists(
 
 const errorMessage = getErrorMessageFromLocalFile(errorTextFilePath)
 
-// const aiclient = new ChatGptClient({ apiKey: this.openApiKey })
-const aiclient = new DummyAiClient()
+const aiclient = new ChatGptClient({ apiKey: process.env.OPENAI_API_KEY })
+// const aiclient = new DummyAiClient()
 const ai = new AiService(aiclient)
 const fileService = new FileService()
 const bugBusterService = new BugBusterService(ai, fileService, repositoryLocation)

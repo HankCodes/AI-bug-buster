@@ -12,7 +12,11 @@ export class AiService implements IAiService {
         const prompt = this.generatePromptForErrorMessageAnalysis(errorMessage);
         console.log("[AiService]: Analyze error prompt:\n", prompt);
 
-        const answer = await this.askAi(prompt);
+        let answer = await this.askAi(prompt);
+        if (answer.includes("Answer: ")) {
+            answer = answer.split("Answer: ")[1].trim();
+        }
+        console.log("[AiService]: Answer:\n", answer);
         return JSON.parse(answer)
     }
 

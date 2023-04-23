@@ -18,7 +18,7 @@ export default class ChatGptClient implements IAiClient {
 
     constructor(config: ChatGptClientConfig) {
         this.model = config.model || "text-davinci-003";
-        this.maxTokens = config.maxTokens || 200;
+        this.maxTokens = config.maxTokens || 300;
         this.temperature = config.temperature || 0.6;
 
         this.aiClient = new OpenAIApi(new Configuration({
