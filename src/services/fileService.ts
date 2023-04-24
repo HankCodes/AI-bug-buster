@@ -14,11 +14,9 @@ export class FileService {
             console.log("[FileService]: Opening directory", directory);
             const dir = await fsPromises.opendir(directory);
 
-            console.log(`[FileService]: File to search for: ${fileName}`);
+            console.log(`[FileService]: Searching for file: ${fileName}`);
             for await (const dirent of dir) {
                 const entryPath = path.resolve(directory, dirent.name);
-                console.log(`[FileService]: Searching in ${entryPath} for file ${fileName}...`);
-
                 const stats = await fsPromises.stat(entryPath);
                 if (stats.isDirectory()) {
                     const result = await this.search(entryPath, fileName);

@@ -21,7 +21,7 @@ export class BugBusterService {
     }
 
     private updateFiles = async (prompts: [{ fileName: string, prompt: string }]) => {
-        prompts.forEach(async (item) => {
+        await Promise.all(prompts.map(async (item) => {
             const fileName = this.fileService.getFileNameFomPath(item.fileName);
             if (!fileName) return console.log("[BugBusterService]: Filename not resolved: ", item.fileName)
 
@@ -33,6 +33,6 @@ export class BugBusterService {
 
             console.log(`[BugBusterService]: Changes to be applied to the file ${file}: \n\n`, chatGPTChanges);
             this.fileService.replaceContent(file, chatGPTChanges.trim())
-        })
+        }))
     }
 }
