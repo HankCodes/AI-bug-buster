@@ -9,11 +9,11 @@ fi
 
 echo "Cloning repository from ${GIT_REPOSITORY_URL}"
 
-REPO_DIR="../my-repo"
 if [[ -z "${REPOSITORY_LOCAL_LOCATION}" ]]; then
-  echo "REPOSITORY_LOCAL_LOCATION not set, using default destination: ${REPO_DIR}"
+  echo "REPOSITORY_LOCAL_LOCATION not set"
+  exit 1
 else
-  REPO_DIR="${REPOSITORY_LOCAL_LOCATION}"
+  REPO_DIR="${REPOSITORY_LOCAL_LOCATION}/bug-buster-local-repo"
   echo "REPOSITORY_LOCAL_LOCATION set, using: ${REPO_DIR}"
 fi
 

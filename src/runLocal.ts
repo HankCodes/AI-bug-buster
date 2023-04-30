@@ -18,7 +18,7 @@ const getErrorMessageFromLocalFile = (location: string) => {
             console.log(`Could not find file: "${location}"`)
             process.exit(1)
         }
-        throw new Error('Unexpected error reading localErrorMessage.txt')
+        throw new Error('Unexpected error reading ' + location + ': ' + error.message)
     }
 }
 
@@ -40,7 +40,7 @@ const checkFileExistsAbsolutePath = (location: string, errorMessage: string) => 
 if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not set");
 if (!process.env.REPOSITORY_LOCAL_LOCATION) throw new Error("REPOSITORY_LOCAL_LOCATION not set");
 
-const repositoryLocation = `${process.env.REPOSITORY_LOCAL_LOCATION}`
+const repositoryLocation = `${process.env.REPOSITORY_LOCAL_LOCATION}/bug-buster-local-repo`
 
 checkFileExistsAbsolutePath(
     repositoryLocation,

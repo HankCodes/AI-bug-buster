@@ -57,6 +57,8 @@ Insiden the created `.env` file, make the appropriate changes
 > in the repositpry url e.g:
 > `https://<username>:<GitHub API Key>@github.com/your/repository.git`
 
+If you have trouble with the local repositpry location try to provide an absolute path.
+
 ### Local one-time run
 
 The easiest way of exploring the application is to run it locally through the `./run.sh` script.
