@@ -64,15 +64,15 @@ export class FileService {
         }
 
         console.log(`[FileService]: Extracing filename from path ${pathToCheck}`);
-        const extractedFileNme = path.basename(pathToCheck) || null;
+        const extractedFileName = path.basename(pathToCheck)?.split(":").shift() || null;
 
-        if (!extractedFileNme) {
+        if (!extractedFileName) {
             console.log("[FileService]: Could not extract a file name from the following path: ", pathToCheck);
             return null;
         }
 
-        console.log(`[FileService]: File name extracted: ${extractedFileNme}`);
-        return extractedFileNme;
+        console.log(`[FileService]: File name extracted: ${extractedFileName}`);
+        return extractedFileName;
     }
 
     private shouldIgnoreDirectory(directory: string): boolean {

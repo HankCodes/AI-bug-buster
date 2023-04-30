@@ -17,11 +17,16 @@ else
   echo "REPOSITORY_LOCAL_LOCATION set, using: ${REPO_DIR}"
 fi
 
-# Clean up the repo directory if it already exists
-if [ -d "$REPO_DIR" ]; then
-  echo "Removing existing repo directory"
-  rm -rf "$REPO_DIR"
-fi
+if [[ "${BYPASS_CLONE_REPOSITORY}" == "true" ]]; then
+  echo "BYPASS_CLONE_REPOSITORY was set to true, skipping clone"
+else
+  echo "BYPASS_CLONE_REPOSITORY was set to false. Cloning repository..."
 
-# Clone the repository
-git clone $GIT_REPOSITORY_URL $REPO_DIR
+  # Clean up the repo directory if it already exists
+  if [ -d "$REPO_DIR" ]; then
+    echo "Removing existing repo directory"
+    rm -rf "$REPO_DIR"
+  fi
+
+  git clone $GIT_REPOSITORY_URL $REPO_DIR
+fi
