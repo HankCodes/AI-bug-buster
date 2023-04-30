@@ -8,7 +8,7 @@ export class DummyAiClient implements IAiClient {
         let response;
         if (prompt.includes("As a senior developer with")) {
             response = JSON.stringify([
-                { fileName: "src/dummyFiles/file1.ts", prompt: "Fix the bug" },
+                { fileName: "src/dummyFiles/file1.ts:56:67", prompt: "Fix the bug" },
                 // { fileName: "src/dummyFiles/file2.ts", prompt: "Fix the bug" }
             ])
         } else {

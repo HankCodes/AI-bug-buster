@@ -10,6 +10,15 @@ import ChatGptClient from './clients/ChatGptClient'
 dotenv.config()
 const errorTextFilePath = "../local.txt"
 
+const getAiClient = (bypassAiCalls: boolean, apiKey?: string) => {
+    if (!bypassAiCalls) {
+        if (!apiKey) throw new Error("OPENAI_API_KEY not set");
+        return new ChatGptClient({ apiKey })
+    }
+
+    return new DummyAiClient()
+}
+
 const getErrorMessageFromLocalFile = (location: string) => {
     try {
         return fs.readFileSync(path.join(__dirname, location), 'utf8');
@@ -53,8 +62,7 @@ checkFileExists(
 
 const errorMessage = getErrorMessageFromLocalFile(errorTextFilePath)
 
-const aiclient = new ChatGptClient({ apiKey: process.env.OPENAI_API_KEY })
-// const aiclient = new DummyAiClient()
+const aiclient = getAiClient(process.env.BYPASS_AI_CALLS === 'true', process.env.OPENAI_API_KEY)
 const ai = new AiService(aiclient)
 const fileService = new FileService()
 const bugBusterService = new BugBusterService(ai, fileService, repositoryLocation)

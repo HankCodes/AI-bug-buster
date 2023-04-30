@@ -4,6 +4,7 @@ source ./set-envs.sh
 
 export GIT_REPOSITORY_URL
 export REPOSITORY_LOCAL_LOCATION
+export BYPASS_CLONE_REPOSITORY
 
 # Run clone-repository.sh with the environment variables
 ./clone-repository.sh
