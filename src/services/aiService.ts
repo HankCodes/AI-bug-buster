@@ -10,14 +10,16 @@ export class AiService implements IAiService {
     }
 
     async getFilesAndPrompts(errorMessage: string): Promise<[{ fileName: string, prompt: string }]> {
-        const prompt = PromptFactory.analyzeErrorPrompt(1)(errorMessage);
+        const prompt = PromptFactory.analyzeErrorPrompt(2)(errorMessage);
         console.log("[AiService]: Analyze error prompt:\n", prompt);
 
         let answer = await this.askAi(prompt);
+        console.log("[AiService]: Answer:\n", answer);
+
         if (answer.includes("Answer: ")) {
             answer = answer.split("Answer: ")[1].trim();
         }
-        console.log("[AiService]: Answer:\n", answer);
+
         return JSON.parse(answer)
     }
 
@@ -33,7 +35,7 @@ export class AiService implements IAiService {
 
         const completion = await this.aiClient.createCompletion(prompt);
 
-        // console.log("\n\ncompletion", completion.data, "\n\n");
+        console.log("\n\ncompletion", completion.data, "\n\n");
         console.log("\n[AiService]: finish_reason: ", completion.data.choices[0].finish_reason, "\n");
 
         return completion.data.choices[0].text || "";

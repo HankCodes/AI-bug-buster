@@ -15,7 +15,24 @@ const analyzeErrorPrompt1 = (stackTrace: string): string => {
 }
 
 const analyzeErrorPrompt2 = (stackTrace: string): string => {
-    return ""
+    return `
+    Given the following stacktrace:
+
+    ${stackTrace}
+
+    Do the following:
+    1. analyze the root cause of the error
+    2. When you have found a fix or an improvement for the issue, extract the file name of the file where the error occur and construct a chatGPT prompt that have a detailed explanation of what the error is.
+
+    The response you give will be read by a machine so you need to respond in the following JSON format and nothing else:
+
+    [{
+        "fileName": "nameOfFile.kt",
+        "prompt": "there seems to be unvalidated input passed into the repository.createUser() function,  make sure that the email field is the correct format"
+    }]
+
+    You must provide valid json and nothing else.
+    `.trim().replace("\n", " ")
 }
 
 const fileUpdatePrompt1 = (prompt: string, fileContent: string): string => {
