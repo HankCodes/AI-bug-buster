@@ -1,25 +1,36 @@
 import { IAiService } from "./contracts/IAiService";
 import { FileService } from "./FileService";
 
+enum Mode {
+    ANALYZE = "ANALYZE",
+    CODE = "CODE"
+}
+
 export class BugBusterService {
     private ai: IAiService;
     private fileService: FileService;
     private repositoryLocation: string;
+    public mode: Mode;
 
-    constructor(aiService: IAiService, fileService: FileService, repositoryLocation: string) {
+    constructor(
+        aiService: IAiService,
+        fileService: FileService,
+        repositoryLocation: string,
+        mode: Mode = Mode.CODE,) {
         this.ai = aiService;
         this.fileService = fileService;
         this.repositoryLocation = repositoryLocation;
+        this.mode = mode;
     }
 
     public async analyzeError(errorMessage: string) {
-        console.log("[BugBusterService]: Running in ANALYZE mode, will analyze the error and give a written explanation of a solution");
+        console.log(`[BugBusterService]: Running in ${this.mode} mode, will analyze the error and give a written explanation of a solution`);
         const filesAndPrompts = await this.ai.getFilesAndPrompts(errorMessage)
         console.log("[BugBusterService]: The files to update and the corresponding prompts", filesAndPrompts);
     }
 
     public async bustTheBugs(errorMessage: string) {
-        console.log("[BugBusterService]: Running in CODE mode, will create a PR with the changes");
+        console.log(`[BugBusterService]: Running in ${this.mode} mode, will create a PR with the changes`);
 
         const filesAndPrompts = await this.ai.getFilesAndPrompts(errorMessage)
         console.log("[BugBusterService]: The files to update and the corresponding prompts", filesAndPrompts);
